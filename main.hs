@@ -1,20 +1,34 @@
 import System.Environment
-import Text.Read
+import Text.Read (readMaybe)
 
-eval' :: [String] -> [Integer]
+type Value = Integer
+
+data Token = BinaryOperator (Value -> Value -> Value) String | Number Value
+
+instance Show Token where
+  show (BinaryOperator f s) = show s
+  show (Number n) = show n
+
+toToken :: String -> Token
+toToken op@("+") = BinaryOperator (+) op
+toToken op@("-") = BinaryOperator (-) op
+toToken op@("div") = BinaryOperator div op
+toToken x = case readMaybe x of
+              Just i -> Number i
+              Nothing -> error $ show x ++ " is neither operator nor number"
+
+eval' :: [Token] -> [Value]
 eval' xs = foldl f [] xs
   where
     f acc x = case (acc, x) of
-      (a:b:rest, "+") -> (b + a):rest
-      (a:b:rest, "-") -> (b - a):rest
-      (rest, op) | op `elem` ["+", "-"]
-                   -> error $ "Trying to apply " ++ show op ++ " to stack " ++
-                      show rest ++ " that doesn't have enough elements"
-      (rest, num) -> case readMaybe num of
-                       Just a -> a:rest
-                       Nothing -> error $ show num ++ " doesn't seem to be either an operator or a number"
+      (rest, Number n) -> n:rest
+      (a:b:rest, BinaryOperator f _) -> f b a : rest
+      (_, op@(BinaryOperator f _))   ->
+        error $ "Trying to apply " ++ show op ++
+              " while the stack " ++ show acc ++ " doesn't have enough elements"
 
-eval = eval' . words
+eval :: String -> [Value]
+eval = eval' . map toToken . words
 
 main = do
   eq <- getArgs
