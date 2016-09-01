@@ -1,31 +1,52 @@
 import System.Environment (getArgs)
-import Text.Read (readMaybe)
+import Control.Arrow (first)
 
 type Value = Integer
 
-data Token = BinaryOperator (Value -> Value -> Value) String | Number Value
+-- data Op
+
+data Op = Plus | Minus | Div
+
+instance Show Op where
+  show Plus  = "+"
+  show Minus = "-"
+  show Div   = "div"
+
+instance Read Op where
+  readsPrec d ('+':s) = [(Plus,  s)]
+  readsPrec d ('-':s) = [(Minus, s)]
+  readsPrec d ('d':'i':'v':s) = [(Div, s)]
+  readsPrec d _ = []
+
+opFun :: Integral n => Op -> (n -> n -> n)
+opFun Plus  = (+)
+opFun Minus = (-)
+opFun Div   = div
+
+-- data Token
+
+data Token = BinaryOperator Op | Number Value
 
 instance Show Token where
-  show (BinaryOperator f s) = show s
+  show (BinaryOperator o) = show o
   show (Number n) = show n
 
-toToken :: String -> Token
-toToken op@("+") = BinaryOperator (+) op
-toToken op@("-") = BinaryOperator (-) op
-toToken op@("div") = BinaryOperator div op
-toToken x = case readMaybe x of
-              Just i -> Number i
-              Nothing -> error $ show x ++ " is neither operator nor number"
+instance Read Token where
+  readsPrec d s =
+    map (first BinaryOperator) (readsPrec d s :: [(Op, String)]) ++
+    map (first Number)         (readsPrec d s :: [(Value, String)])
 
-eval' :: [Token] -> [Value]
-eval' xs = foldl f [] xs
+-- execution
+
+eval :: [Token] -> [Value]
+eval xs = foldl f [] xs
   where
     f acc x = case (acc, x) of
       (rest, Number n) -> n:rest
-      (a:b:rest, BinaryOperator f _) -> f b a : rest
-      (_, op@(BinaryOperator f _))   ->
+      (a:b:rest, BinaryOperator f) -> opFun f b a : rest
+      (_, op@(BinaryOperator f))   ->
         error $ "Trying to apply " ++ show op ++
               " while the stack " ++ show acc ++ " doesn't have enough elements"
 
-main = getArgs >>= print . eval' . map toToken . (>>= words)
+main = getArgs >>= print . eval . map read . (>>= words)
 
