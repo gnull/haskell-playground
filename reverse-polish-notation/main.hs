@@ -27,9 +27,5 @@ eval' xs = foldl f [] xs
         error $ "Trying to apply " ++ show op ++
               " while the stack " ++ show acc ++ " doesn't have enough elements"
 
-eval :: String -> [Value]
-eval = eval' . map toToken . words
+main = getArgs >>= print . eval' . map toToken . (>>= words)
 
-main = do
-  eq <- getArgs
-  putStrLn $ show $ eval $ unwords $ eq
