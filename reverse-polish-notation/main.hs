@@ -39,14 +39,12 @@ instance Read Token where
 -- execution
 
 eval :: [Token] -> [Value]
-eval xs = foldl f [] xs
+eval = foldl f []
   where
-    f acc x = case (acc, x) of
-      (rest, Number n) -> n:rest
-      (a:b:rest, BinaryOperator f) -> opFun f b a : rest
-      (_, op@(BinaryOperator f))   ->
-        error $ "Trying to apply " ++ show op ++
-              " while the stack " ++ show acc ++ " doesn't have enough elements"
+    f st (Number n) = n : st
+    f (a : b : st) (BinaryOperator f) = opFun f b a : st
+    f st o = error $ "Trying to apply (" ++ show o ++ ") while the stack " ++
+               show st ++ " doesn't have enough elements"
 
 main = getArgs >>= print . eval . map read . (>>= words)
 
