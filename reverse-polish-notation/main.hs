@@ -1,4 +1,4 @@
-import System.Environment
+import System.Environment (getArgs)
 import Text.Read (readMaybe)
 
 type Value = Integer
