@@ -93,3 +93,39 @@ parens open close p =
     return x
 
 -- #######
+
+data Node = Node String [Node]
+
+instance Show Node where
+  show (Node name children) =
+    unlines $ (name:) $ map ("  " ++) $ concat $ map (lines . show) children
+
+nodeName :: Parser String
+nodeName = many $ oneOf $ ['a'..'z'] ++ "_-"
+
+space :: Parser ()
+space = do {oneOf " \t\b\n\r"; return ()}
+
+-- The chainl functions below should be rewritten to avoid the bullshit above
+sepList :: Parser b -> Parser a -> Parser [a]
+sepList sep val = do
+  chainl val' sep' [] where
+    sep' = do
+      sep
+      return (++)
+    val' = do
+      x <- val
+      return [x]
+
+node :: Parser Node
+node = do
+  name <- nodeName
+  many space
+  res <- parens '{' '}' $ do
+    many space
+    res <- sepList (many space) node
+    many space
+    return res
+  many space;
+  char ';'
+  return $ Node name res
