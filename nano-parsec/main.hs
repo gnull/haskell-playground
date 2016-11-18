@@ -1,6 +1,6 @@
 -- Example from tutorial at dev.stephendiehl.com
 import Data.Functor (Functor)
-import Control.Applicative (Applicative, pure, (<*>))
+import Control.Applicative (Applicative, pure, (<*>), Alternative, empty, (<|>), some, many)
 import Control.Monad (Monad, (>>=), return, MonadPlus, mzero, mplus)
 
 newtype Parser a = Parser { parse :: String -> [(a, String)] }
@@ -35,3 +35,10 @@ instance Monad Parser where
 instance MonadPlus Parser where
   mzero = Parser $ const []
   mplus p q = Parser $ \s -> parse p s ++ parse q s
+
+instance Alternative Parser where
+  empty = mzero
+  p <|> q = Parser $ \s ->
+    case parse p s of
+      [] -> parse q s
+      x  -> x
