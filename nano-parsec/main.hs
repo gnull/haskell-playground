@@ -1,5 +1,5 @@
 -- Example from tutorial at dev.stephendiehl.com
-import Data.Functor (Functor)
+import Data.Functor (Functor, (<$>))
 import Control.Applicative (Applicative, pure, (<*>), Alternative, empty, (<|>), some, many)
 import Control.Monad (Monad, (>>=), return, MonadPlus, mzero, mplus)
 
@@ -42,3 +42,41 @@ instance Alternative Parser where
     case parse p s of
       [] -> parse q s
       x  -> x
+
+-- Some funny higher-order functions and Parser's
+
+satisfy :: (Char -> Bool) -> Parser Char
+satisfy p = item >>= \c ->
+  if p c then return c else empty
+
+oneOf :: [Char] -> Parser Char
+oneOf s = satisfy (flip elem s)
+
+chainl1 :: Parser a -> Parser (a -> a -> a) -> Parser a
+chainl1 pa pf =
+  do {a <- pa; rest a} where
+    rest a =
+      do
+        f <- pf
+        b <- pa
+        rest $ f a b
+      <|> return a
+
+chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
+chainl pa pf a = chainl1 pa pf <|> return a
+
+char :: Char -> Parser Char
+char x = satisfy (== x)
+
+string :: String -> Parser String
+string [] = return []
+string (x:xs) = do
+  x  <- char x
+  xs <- string xs
+  return $ x:xs
+
+digit :: Parser Char
+digit = oneOf ['0'..'9']
+
+natural :: Parser Integer
+natural = read <$> some digit
