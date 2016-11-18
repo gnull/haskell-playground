@@ -1,7 +1,7 @@
 -- Example from tutorial at dev.stephendiehl.com
 import Data.Functor (Functor)
 import Control.Applicative (Applicative, pure, (<*>))
-import Control.Monad (Monad, (>>=), return)
+import Control.Monad (Monad, (>>=), return, MonadPlus, mzero, mplus)
 
 newtype Parser a = Parser { parse :: String -> [(a, String)] }
 
@@ -31,3 +31,7 @@ instance Monad Parser where
   return a = Parser $ \s -> [(a, s)]
   p >>= f = Parser $
     \s -> concatMap (\(a, s') -> parse (f a) s') $ parse p s
+
+instance MonadPlus Parser where
+  mzero = Parser $ const []
+  mplus p q = Parser $ \s -> parse p s ++ parse q s
