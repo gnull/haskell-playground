@@ -78,5 +78,8 @@ string (x:xs) = do
 digit :: Parser Char
 digit = oneOf ['0'..'9']
 
-natural :: Parser Integer
-natural = read <$> some digit
+number :: Parser Integer
+number = do
+  sign   <- string "-" <|> return []
+  digits <- some digit
+  return $ read $ sign ++ digits
