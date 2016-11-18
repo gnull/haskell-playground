@@ -129,3 +129,11 @@ node = do
   many space;
   char ';'
   return $ Node name res
+
+main = do
+  interact $ show . runParser p' where
+    p' = do
+      many space
+      x <- node
+      many space
+      return x
