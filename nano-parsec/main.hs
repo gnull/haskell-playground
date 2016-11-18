@@ -83,3 +83,11 @@ number = do
   sign   <- string "-" <|> return []
   digits <- some digit
   return $ read $ sign ++ digits
+
+parens :: Char -> Char -> Parser a -> Parser a
+parens open close p =
+  do
+    char open
+    x <- p
+    char close
+    return x
