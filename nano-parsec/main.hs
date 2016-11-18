@@ -16,11 +16,6 @@ item = Parser $ \s -> case s of
   [] -> []
   x:xs -> [(x, xs)]
 
-instance Monad Parser where
-  return a = Parser $ \s -> [(a, s)]
-  p >>= f = Parser $
-    \s -> concatMap (\(a, s') -> parse (f a) s') $ parse p s
-
 instance Functor Parser where
   fmap f (Parser p) = Parser $ \s -> [(f a, s') | (a, s') <- p s]
 
@@ -31,3 +26,8 @@ instance Applicative Parser where
       (f, s1) <- p1 s
       (a, s2) <- p2 s1
       return (f a, s2)
+
+instance Monad Parser where
+  return a = Parser $ \s -> [(a, s)]
+  p >>= f = Parser $
+    \s -> concatMap (\(a, s') -> parse (f a) s') $ parse p s
