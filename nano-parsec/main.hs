@@ -110,6 +110,10 @@ identifier = many $ oneOf $ ['a'..'z'] ++ "_-"
 space :: Parser ()
 space = do {oneOf " \t\b\n\r"; return ()}
 
+cStr :: Parser String
+cStr = parens '"' '"' $ do
+  some $ satisfy (/='"')
+
 -- The chainl functions below should be rewritten to avoid the bullshit above
 sepList :: Parser b -> Parser a -> Parser [a]
 sepList sep val = do
@@ -120,6 +124,9 @@ sepList sep val = do
     val' = do
       x <- val
       return [x]
+
+value :: Parser Value
+value = (Str <$> cStr) `mplus` (Numb <$> fromInteger <$> number);
 
 node :: Parser Node
 node = do
