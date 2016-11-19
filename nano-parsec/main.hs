@@ -94,10 +94,14 @@ parens open close p =
 
 -- #######
 
-data Node = Node String [Node]
+data Value = Numb Int | Str String
+
+data Property = Property String Value
+
+data Node = Node String [Node] [Property]
 
 instance Show Node where
-  show (Node name children) =
+  show (Node name children []) =
     unlines $ (name:) $ map ("  " ++) $ concat $ map (lines . show) children
 
 nodeName :: Parser String
@@ -128,7 +132,7 @@ node = do
     return res
   many space;
   char ';'
-  return $ Node name res
+  return $ Node name res []  -- TODO: pass list of properties instead of []
 
 main = do
   interact $ show . runParser p' where
