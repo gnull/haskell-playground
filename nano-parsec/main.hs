@@ -108,8 +108,8 @@ instance Show Property where
   show (Property name value) = name ++ " = " ++ show value ++ ";"
 
 instance Show Node where
-  show (Node name children []) =
-    unlines $ (name:) $ map ("  " ++) $ concat $ map (lines . show) children
+  show (Node name children props) =
+    unlines $ (name:) $ map ("  " ++) $ concat $ map (lines . show) props ++ map (lines . show) children
 
 identifier :: Parser String
 identifier = many $ oneOf $ ['a'..'z'] ++ "_-"
