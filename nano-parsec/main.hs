@@ -105,7 +105,7 @@ instance Show Value where
   show (Str x) = show x
 
 instance Show Property where
-  show (Property name value) = show name ++ " = " ++ show value ++ ";"
+  show (Property name value) = name ++ " = " ++ show value ++ ";"
 
 instance Show Node where
   show (Node name children []) =
