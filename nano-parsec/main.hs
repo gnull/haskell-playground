@@ -135,6 +135,17 @@ sepList sep val = do
 value :: Parser Value
 value = (Str <$> cStr) `mplus` (Numb <$> fromInteger <$> number);
 
+property :: Parser Property
+property = do
+  name <- identifier
+  many space
+  char '='
+  many space
+  value <- value
+  many space
+  char ';'
+  return $ Property name value
+
 node :: Parser Node
 node = do
   name <- identifier
