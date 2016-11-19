@@ -104,8 +104,8 @@ instance Show Node where
   show (Node name children []) =
     unlines $ (name:) $ map ("  " ++) $ concat $ map (lines . show) children
 
-nodeName :: Parser String
-nodeName = many $ oneOf $ ['a'..'z'] ++ "_-"
+identifier :: Parser String
+identifier = many $ oneOf $ ['a'..'z'] ++ "_-"
 
 space :: Parser ()
 space = do {oneOf " \t\b\n\r"; return ()}
@@ -123,7 +123,7 @@ sepList sep val = do
 
 node :: Parser Node
 node = do
-  name <- nodeName
+  name <- identifier
   many space
   res <- parens '{' '}' $ do
     many space
