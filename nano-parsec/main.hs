@@ -150,14 +150,16 @@ node :: Parser Node
 node = do
   name <- identifier
   many space
-  res <- parens '{' '}' $ do
+  (res, props) <- parens '{' '}' $ do
+    many space
+    props <- sepList (many space) property
     many space
     res <- sepList (many space) node
     many space
-    return res
+    return (res, props)
   many space;
   char ';'
-  return $ Node name res []  -- TODO: pass list of properties instead of []
+  return $ Node name res props
 
 main = do
   interact $ show . runParser p' where
