@@ -100,6 +100,13 @@ data Property = Property String Value
 
 data Node = Node String [Node] [Property]
 
+instance Show Value where
+  show (Numb x) = show x
+  show (Str x) = show x
+
+instance Show Property where
+  show (Property name value) = show name ++ " = " ++ show value ++ ";"
+
 instance Show Node where
   show (Node name children []) =
     unlines $ (name:) $ map ("  " ++) $ concat $ map (lines . show) children
