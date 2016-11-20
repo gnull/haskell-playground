@@ -1,0 +1,18 @@
+/ {
+	some-property = "asd";
+	another-property = 123;
+
+	some-node {
+		a = "b";
+		azaza = "ololo";
+
+		sub-node {
+			zero-length-str = "";
+			some-hex-int    = 100;
+		};
+	};
+
+	sibling {
+		azaza = "asd";
+	};
+};
