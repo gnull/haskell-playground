@@ -112,7 +112,7 @@ instance Show Node where
     unlines $ (name:) $ map ("  " ++) $ concat $ map (lines . show) props ++ map (lines . show) children
 
 identifier :: Parser String
-identifier = many $ oneOf $ ['a'..'z'] ++ "_-"
+identifier = some $ oneOf $ ['a'..'z'] ++ "_-"
 
 space :: Parser ()
 space = do {oneOf " \t\b\n\r"; return ()}
