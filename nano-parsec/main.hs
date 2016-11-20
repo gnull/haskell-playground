@@ -148,7 +148,7 @@ property = do
 
 node :: Parser Node
 node = do
-  name <- identifier
+  name <- (identifier <|> string "/")
   many space
   (res, props) <- parens '{' '}' $ do
     many space
