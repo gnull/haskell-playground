@@ -133,7 +133,7 @@ sepList sep val = do
       return [x]
 
 value :: Parser Value
-value = (Str <$> cStr) `mplus` (Numb <$> fromInteger <$> number);
+value = (Str <$> cStr) `mplus` (Numb <$> fromInteger <$> number)
 
 property :: Parser Property
 property = do
@@ -157,7 +157,7 @@ node = do
     res <- sepList (many space) node
     many space
     return (res, props)
-  many space;
+  many space
   char ';'
   return $ Node name res props
 
