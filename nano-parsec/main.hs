@@ -119,7 +119,7 @@ space = do {oneOf " \t\b\n\r"; return ()}
 
 cStr :: Parser String
 cStr = parens '"' '"' $ do
-  some $ satisfy (/='"')
+  many $ satisfy (/='"')
 
 -- The chainl functions below should be rewritten to avoid the bullshit above
 sepList :: Parser b -> Parser a -> Parser [a]
