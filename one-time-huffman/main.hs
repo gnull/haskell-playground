@@ -27,7 +27,7 @@ huffman = toCode . foldHTree . map (\(c, a) -> (c, Leaf a)) . sortBy (comparing 
 
 -- ########
 
-showBits = concat . (map show)
+showBits = concatMap show
 
 showCode :: (Show a) => (a, [Bit]) -> String
 showCode (c, bits) = show c ++ ": " ++ showBits bits
