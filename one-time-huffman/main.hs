@@ -3,6 +3,7 @@ import System.Environment (getArgs)
 import Control.Arrow ((&&&))
 import Data.List (group, sort, insertBy, sortBy)
 import Data.Ord (comparing)
+import Data.Maybe (fromJust)
 
 type Bit = Int
 
@@ -33,10 +34,9 @@ showCode :: (Show a) => (a, [Bit]) -> String
 showCode (c, bits) = show c ++ ": " ++ showBits bits
 
 main = do
-  inputFile:codeFile:outputFile:_ <- getArgs
-  contents <- readFile inputFile
-  let code = huffman contents
+  plaintextFile:codeFile:ciphertextFile:[] <- getArgs
+  plaintext <- readFile plaintextFile
+  let code = huffman plaintext
   writeFile codeFile $ unlines $ map showCode code
-  writeFile outputFile $
-    concat $ map showBits $
-    map (\x -> let (Just y) = lookup x code in y) contents
+  writeFile ciphertextFile $ concatMap showBits $
+    map (fromJust <$> flip lookup code) plaintext
