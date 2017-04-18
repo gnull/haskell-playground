@@ -1,4 +1,4 @@
-import Control.Concurrent (forkIO)
+import Control.Concurrent (forkIO, myThreadId)
 import Control.Concurrent.Chan
 import Control.Monad (forever)
 
@@ -6,12 +6,10 @@ import System.Console.Readline (readline)
 
 main = do
   c <- newChan
-  forkIO $ forever $ do
+  mapM forkIO $ take 10 $ repeat $ forever $ do
     x <- readChan c
-    putStrLn $ "recv 1: " ++ x
-  forkIO $ forever $ do
-    x <- readChan c
-    putStrLn $ "recv 2: " ++ x
+    t <- myThreadId
+    putStrLn $ "recv " ++ show t ++ ": " ++ x
   forever $ do
     l <- readline "-$> "
     case l of
