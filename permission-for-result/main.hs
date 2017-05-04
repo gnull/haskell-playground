@@ -12,7 +12,7 @@ toMaybeFixedA :: Int -> Maybe b -> Maybe (Int, b)
 toMaybeFixedA _ (Just b) = Just (1, b)
 toMaybeFixedA _ Nothing  = Nothing
 
-kek :: (forall a b . a -> Maybe b -> Maybe (a, b)) -> c -> Maybe d -> Maybe (c, d)
+kek :: (forall b . a -> Maybe b -> Maybe (a, b)) -> a -> Maybe d -> Maybe (a, d)
 kek g a b = g a b
 
 -- Tests. These should successfully compile.
