@@ -22,5 +22,10 @@ kak = kek
 -- Tests. These should successfully compile.
 a = kek toMaybe
 b = kek toMaybeFixedA
+a' = kak toMaybe
+b' = kak toMaybeFixedA
 -- This one shouldn't compile
--- c = kek toMaybeWrong
+-- c = kak toMaybeWrong
+-- type this in REPL to get error:
+--   :t kak toMaybeWrong
+--   :t kek toMaybeWrong
