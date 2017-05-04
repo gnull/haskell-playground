@@ -15,6 +15,10 @@ toMaybeFixedA _ Nothing  = Nothing
 kek :: (forall b . a -> Maybe b -> Maybe (a, b)) -> a -> Maybe d -> Maybe (a, d)
 kek g a b = g a b
 
+-- Looks like this should be as safe as `kek`
+kak :: (forall b . a -> Maybe b -> Maybe (a, b)) -> a -> Maybe () -> Maybe (a, ())
+kak = kek
+
 -- Tests. These should successfully compile.
 a = kek toMaybe
 b = kek toMaybeFixedA
